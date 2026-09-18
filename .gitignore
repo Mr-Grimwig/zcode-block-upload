@@ -1,0 +1,18 @@
+# 运行期产生的文件（每台机器不同，不进版本库）
+zcode-guard.log
+zcode-guard.log.*
+zcode-guard.pid
+zcode-hook-state.json
+NEEDS-REVIEW.txt
+*.bak-*
+
+# 构建产物：用 `node build-oneclick.js` 重新生成，不提交（避免 base64 噪音）
+一键安装.cmd
+
+# 编辑器 / 系统
+.DS_Store
+Thumbs.db
+*.swp
+.idea/
+.vscode/
+node_modules/

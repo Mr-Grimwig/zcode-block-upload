@@ -1,0 +1,11 @@
+# 统一行尾，避免 Windows/Linux 交叉编辑时把整个文件标记为改动
+* text=auto
+
+# Windows 批处理必须是 CRLF
+*.cmd text eol=crlf
+*.bat text eol=crlf
+
+# 脚本与文档用 LF
+*.js text eol=lf
+*.json text eol=lf
+*.md text eol=lf
