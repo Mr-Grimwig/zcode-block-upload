@@ -1,5 +1,7 @@
 # zcode-block-upload
 
+**下载即用** → [**Releases 下载 `install-oneclick.cmd`**](https://github.com/Mr-Grimwig/zcode-block-upload/releases/latest)：单文件约 50KB，双击运行即自动完成安装、打补丁与挂钩子，然后重启一次 ZCode 即可。
+
 > 阻止 [ZCode](https://zcode.z.ai) 桌面端把**整个工作区（含完整 `.git` 历史）**打包加密后上传到阿里云 OSS。
 >
 > Blocks ZCode (a Chinese AI coding desktop app) from silently packaging your whole workspace — including the
