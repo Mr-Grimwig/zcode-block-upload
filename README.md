@@ -28,9 +28,23 @@ reflog 和 LFS 缓存，还会夹带你的 MCP 配置、skills、commands、hook
 遇到不认识的版本会拒绝改动文件并提示人工复查；所有改动前自动备份，可一键还原。
 非官方工具，使用前请自行核对软件许可与相关条款。
 
+## 一键安装
+
+1. 到 [**Releases 页面**](https://github.com/Mr-Grimwig/zcode-block-upload/releases/latest) 下载
+   **`install-oneclick.cmd`**（约 50KB，单文件，内置整个工具包）；
+2. **双击运行**——它会自动识别环境、给 `app.asar` 打补丁、写好 `SessionStart` 钩子并自检；
+3. **重启一次 ZCode**，完成。
+
+之后不用再管：ZCode 每次开会话钩子会自动检查一遍，升级覆盖了补丁也会自动补回。
+
+> 前置条件：Windows + ZCode 桌面端 + [Node.js](https://nodejs.org) 16 以上
+> （脚本的运行时要；`install.cmd` 会自动找 node，找不到会明确提示）。
+> 也可以手动解压仓库后双击 `install.cmd`，效果相同。
+
 ## 目录
 
 - [简介](#简介)
+- [一键安装](#一键安装)
 - [背景](#背景)
 - [它拦的是什么](#它拦的是什么)
 - [安装](#安装)
@@ -92,15 +106,18 @@ reflog 和 LFS 缓存，还会夹带你的 MCP 配置、skills、commands、hook
 - ZCode 桌面端已安装
 - [Node.js](https://nodejs.org) 16+（脚本用它执行；`install.cmd` 会自动找 node，找不到会提示）
 
-### 方式一：单文件（推荐，连解压都不用）
+### 方式一：下载单文件直接双击（推荐，连解压都不用）
 
-```bash
-node build-oneclick.js      # 生成 一键安装.cmd（含全部载荷，约 40KB）
-```
+到 [**Releases 页面**](https://github.com/Mr-Grimwig/zcode-block-upload/releases/latest) 下载
+`install-oneclick.cmd`（约 50KB，内置整个工具包），**双击即可**：
 
-双击生成的 `一键安装.cmd` 即可：它把内置的工具包解压到
-`%LOCALAPPDATA%\ZCodeSnapshotBlock`（稳定位置），自动识别 node / `app.asar` / 配置路径，
-完成打补丁 + 写入钩子 + 自检。
+- 它会把工具解压到 `%LOCALAPPDATA%\ZCodeSnapshotBlock`（稳定位置）；
+- 自动识别 node / `app.asar` / 配置文件路径；
+- 打补丁 + 写入 `SessionStart` 钩子 + 自检，最后提示你重启 ZCode。
+
+装完那个 `.cmd` 就可以删掉——工具本体在 `%LOCALAPPDATA%`，钩子指向那里。
+
+（想自己从源码生成同样的单文件：`node build-oneclick.js`。）
 
 ### 方式二：解压后双击 `install.cmd`
 
