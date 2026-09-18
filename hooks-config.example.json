@@ -9,7 +9,7 @@
           "hooks": [
             {
               "type": "process",
-              "command": "D:\\Nodejs\\node.exe",
+              "command": "C:\\Program Files\\nodejs\\node.exe",
               "args": [
                 "C:\\path\\to\\zcode-block-upload\\zcode-session-hook.js"
               ],
