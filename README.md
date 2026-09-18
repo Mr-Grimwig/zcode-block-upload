@@ -1,52 +1,17 @@
 # zcode-block-upload
 
-**下载即用** → [**Releases 下载 `install-oneclick.cmd`**](https://github.com/Mr-Grimwig/zcode-block-upload/releases/latest)：单文件约 50KB，双击运行即自动完成安装、打补丁与挂钩子，然后重启一次 ZCode 即可。
+ZCode 是智谱的 AI 编程桌面端。它在每次发消息前和任务结束时，会把整个工作区打成一个 tar.gz，用随机生成的 AES-256-CTR 密钥加密，再用服务端下发的 RSA 公钥把密钥包起来，直接 POST 到阿里云 OSS。包里包括 `.git` 的完整对象库、reflog 和 LFS 缓存，另外还会夹带 MCP 配置、skills、commands、hooks 和 AGENTS.md。界面上的"优化体验""仓库快照索引"两个开关管不到这条链路。
 
-> 阻止 [ZCode](https://zcode.z.ai) 桌面端把**整个工作区（含完整 `.git` 历史）**打包加密后上传到阿里云 OSS。
->
-> Blocks ZCode (a Chinese AI coding desktop app) from silently packaging your whole workspace — including the
-> full `.git` history — encrypting it and uploading it straight to Alibaba Cloud OSS on every prompt.
+这个仓库里的工具从用户侧把它切断。ZCode 上传之前必须先向服务端换一份上传凭据，工具把那个取凭据的接口 `/api/v1/snapshot/upload-credential` 换成一个不存在的地址，请求就会得到 404，整条链路在第一步停住：工作区不会被枚举、打包、加密，本地也不会留下快照文件。换掉的是等长的 34 个字节，`app.asar` 里记录的偏移量全都还有效，所以不需要重建归档，也不用关掉 ZCode。
 
-一句话原理：ZCode 上传快照前必须先向服务端换一份"上传凭据"，本工具把那**一个**凭据端点
-在客户端代码里等长替换成一个 404 路径，于是整条链路在第一步就静默放弃——不枚举文件、
-不打包、不加密、不落盘、没有任何数据外发。
+安装：到 [Releases](https://github.com/Mr-Grimwig/zcode-block-upload/releases/latest) 下载 `install-oneclick.cmd`（约 50KB，单文件），双击运行，然后重启一次 ZCode。它会自己装到 `%LOCALAPPDATA%\ZCodeSnapshotBlock`，找好 node、`app.asar` 和配置文件的位置并把钩子配好。桌面上那个文件跑完就可以删掉。需要 Node.js 16 以上，没装的话脚本会明确提示。
 
-> **这不是智谱官方工具**，不在任何官方渠道分发。它修改的是你自己机器上的软件，
-> 请先读文末[免责声明](#免责声明)再决定是否使用。
+这些结论是在 Windows 版 ZCode 3.11.2 上逐条核验过的（端点、加密方式、打包范围、触发时机）。遇到不认识的版本，它会拒绝改文件并留下一条待复查提示；每次改动前都会自动备份，`restore.cmd` 可以还原。
 
-## 简介
-
-ZCode 会在每次发消息前和任务结束时，把整个工作区打 tar.gz、用随机 AES-256-CTR 密钥加密、
-再用服务端下发的 RSA 公钥把密钥包起来，直接 POST 到阿里云 OSS——包里含 `.git` 的完整对象库、
-reflog 和 LFS 缓存，还会夹带你的 MCP 配置、skills、commands、hooks 和 AGENTS.md。
-界面上的"优化体验""仓库快照索引"两个开关并不控制这条链路。
-
-这个工具从用户侧把它切断：把取凭据端点 `/api/v1/snapshot/upload-credential` 等长替换成一个
-404 路径（字节长度一致，asar 头部两万多个文件偏移全部保持有效，无需重建归档），
-整条链路就在第一步静默放弃——不枚举文件、不打包、不加密、不落盘、零外发。
-再借 ZCode 自己的 `SessionStart` 钩子，每次开会话自动检查一遍，升级覆盖后自动把补丁补回来。
-
-已在 Windows 版 ZCode 3.11.2 上逐条核验（端点、加密方案、打包范围、触发时机）。
-遇到不认识的版本会拒绝改动文件并提示人工复查；所有改动前自动备份，可一键还原。
-非官方工具，使用前请自行核对软件许可与相关条款。
-
-## 一键安装
-
-1. 到 [**Releases 页面**](https://github.com/Mr-Grimwig/zcode-block-upload/releases/latest) 下载
-   **`install-oneclick.cmd`**（约 50KB，单文件，内置整个工具包）；
-2. **双击运行**——它会自动识别环境、给 `app.asar` 打补丁、写好 `SessionStart` 钩子并自检；
-3. **重启一次 ZCode**，完成。
-
-之后不用再管：ZCode 每次开会话钩子会自动检查一遍，升级覆盖了补丁也会自动补回。
-
-> 前置条件：Windows + ZCode 桌面端 + [Node.js](https://nodejs.org) 16 以上
-> （脚本的运行时要；`install.cmd` 会自动找 node，找不到会明确提示）。
-> 也可以手动解压仓库后双击 `install.cmd`，效果相同。
+不是智谱官方工具，只改你本机上的软件。用之前请自行确认符合软件许可与相关条款，详见文末[免责声明](#免责声明)。
 
 ## 目录
 
-- [简介](#简介)
-- [一键安装](#一键安装)
 - [背景](#背景)
 - [它拦的是什么](#它拦的是什么)
 - [安装](#安装)
